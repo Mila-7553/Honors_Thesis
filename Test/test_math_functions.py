@@ -16,15 +16,15 @@ def test_take_inverse_matrix():
     assert type(results) == np.matrix
     assert len(results) == 3
     assert len(results[:]) == 3
-    assert results[0,0] == -181.39997132286484
-    assert results[1,0] == 346.82086618012170
-    assert results[2,0] == -167.22601164748204
-    assert results[0,1] == -49.141453222161964
-    assert results[1,1] == 99.181666752383251
-    assert results[2,1] == -49.583095210648771
-    assert results[0,2] == 732.74446483456154
-    assert results[1,2] == -1365.9487590320009
-    assert results[2,2] == 637.88133606940517
+    assert float(results[0,0]) == -181.39997132286484
+    assert float(results[1,0]) == 346.82086618012170
+    assert float(results[2,0]) == -167.22601164748204
+    assert float(results[0,1]) == -49.141453222161964
+    assert float(results[1,1]) == 99.181666752383251
+    assert float(results[2,1]) == -49.583095210648771
+    assert float(results[0,2]) == 732.74446483456154
+    assert float(results[1,2]) == -1365.9487590320009
+    assert float(results[2,2]) == 637.88133606940517
     
 # test_take_inverse_matrix()
 
@@ -58,28 +58,28 @@ matrix2_test4 = [[0.5361692088746649],[-1],[0.46383079112533504]]
 def test_matrix_dot_prod():
     result1 = mf.matrix_dot_prod(matrix1_test1,matrix2_test1)
     assert len(result1) == 3
-    assert result1[0,0] == 57
-    assert result1[1,0] == 46
-    assert result1[2,0] == 49
+    assert float(result1[0,0]) == 57
+    assert float(result1[1,0]) == 46
+    assert float(result1[2,0]) == 49
     
     result2 = mf.matrix_dot_prod(matrix1_test2,matrix2_test2)
     assert len(result2) == 3
     assert len(result2[:]) == 3
-    assert result2[0,0] == 5
-    assert result2[1,1] == 5
-    assert result2[2,2] == 5
+    assert float(result2[0,0]) == 5
+    assert float(result2[1,1]) == 5
+    assert float(result2[2,2]) == 5
     
     result3 = mf.matrix_dot_prod(matrix1_test3,matrix2_test3)
     assert len(result3) == 3
-    assert result3[0] == -5.8515872213727631E-003
-    assert result3[1] == -1.9995299459034648E-003
-    assert result3[2] == -8.6677509347662051E-004
+    assert float(result3[0]) == -5.8515872213727631E-003
+    assert float(result3[1]) == -1.9995299459034648E-003
+    assert float(result3[2]) == -8.6677509347662051E-004
     
     result4 = mf.matrix_dot_prod(matrix1_test4,matrix2_test4)
     assert len(result4) == 3
-    assert result4[0] == 5.8502493672572542E-003
-    assert result4[1] == 2.0256251869944231E-003
-    assert result4[2] == 8.7695014435107410E-004
+    assert float(result4[0]) == 5.8502493672572542E-003
+    assert float(result4[1]) == 2.0256251869944231E-003
+    assert float(result4[2]) == 8.7695014435107410E-004
 # test_matrix_dot_prod()
 # fortran results:
 #  Edit rb:   -5.8515872213727631E-003  -1.9995299459034648E-003  -8.6677509347662051E-004
@@ -106,9 +106,9 @@ test1_c6 =-2.7106217754654516
 test1_c8 =1
 def test_eight_equation_four_coeff():
     result1 = mf.eight_equation_four_coeff(test1_c,test1_c3,test1_c6,test1_c8)
-    assert round(result1[0],13) == round(1.2457493693119874,13)
-    assert round(result1[1],13) == round(1.0544796939362728,13)
-    assert round(result1[2],13) == round(0.98366052181486430,13)
+    assert round(float(result1[0]),13) == round(1.2457493693119874,13)
+    assert round(float(result1[1]),13) == round(1.0544796939362728,13)
+    assert round(float(result1[2]),13) == round(0.98366052181486430,13)
 
 # fortran roots:
 # 0.98366052181486430   (spurious)
