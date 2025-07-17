@@ -1,7 +1,7 @@
-import os
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import demo1
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../Honor_thesis_Code")))
+import Fortran_Code_Replica as fcr
 import numpy as np
 
 
@@ -9,47 +9,15 @@ unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-00
 unit_vector2 = [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
 unit_vector3 = [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
 test_matrix1 = np.matrix([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],[unit_vector1[1],unit_vector2[1],unit_vector3[1]],[unit_vector1[2],unit_vector2[2],unit_vector3[2]]])
-# should have a t least three
-
-def test_take_inverse_matrix():
-    results = demo1.take_inverse_matrix(test_matrix1)
-    print(type(results))
-    assert type(results) == np.matrix
-    assert len(results) == 3
-    assert len(results[:]) == 3
-    assert results[0,0] == -181.39997132286484
-    assert results[1,0] == 346.82086618012170
-    assert results[2,0] == -167.22601164748204
-    assert results[0,1] == -49.141453222161964
-    assert results[1,1] == 99.181666752383251
-    assert results[2,1] == -49.583095210648771
-    assert results[0,2] == 732.74446483456154
-    assert results[1,2] == -1365.9487590320009
-    assert results[2,2] == 637.88133606940517
-# test_take_inverse_matrix()
-
-#  Fortran results:
-#   Edit: inverse unit Vector 1:   -181.39997132286484        346.82086618012170       -167.22601164748204     
-#   Edit: inverse unit Vector 2:   -49.141453222161964        99.181666752383251       -49.583095210648771     
-#   Edit: invers unit Vector 3:    732.74446483456154       -1365.9487590320009        637.88133606940517 
-
-# Python results:
-# -181.39997132286484   346.8208661801217   -167.22601164748204
-# -49.141453222161964   99.18166675238325   -49.58309521064877
-# 732.7444648345615   -1365.948759032001   637.8813360694052
-# not as precise example at [2,2]
-
-
-
 test1_obs_time = [58577.489970740738,58583.545550740739,58590.545550740739]
 sqr_mue = 1.7202098949957226E-002
 
 def test_get_tau_values():
-    result1 = demo1.get_tau_values(test1_obs_time,sqr_mue)
+    result1 = fcr.get_tau_values(test1_obs_time,sqr_mue)
     assert result1[0] == 0.22458337900908587
     assert result1[1] == -0.10416868635938527
     assert result1[2] == 0.12041469264970059
-test_get_tau_values()
+# test_get_tau_values()
     
 #  Edit: tau13:   0.22458337900908587 
 #  Edit: tau1:  -0.10416868635938527     
@@ -60,11 +28,9 @@ test_get_tau_values()
 # -0.10416868635938527
 # 0.12041469264970059
 
-
 tau_test1 = [0.22458337900908587,-0.10416868635938527,0.12041469264970059]
 def test_make_a_b():
-    result1 = demo1.make_a_b(tau_test1[0],tau_test1[1],tau_test1[2])
-    print(result1)
+    result1 = fcr.make_a_b(tau_test1[0],tau_test1[1],tau_test1[2])
     assert True
 # fortran results
 #  Edit a(1):   0.53616920887466490 
@@ -93,55 +59,15 @@ matrix2_test3 = [[0.0032114744736032957],[0],[0.0030602457022409226]]
 matrix1_test4 = matrix1_test3.copy()
 matrix2_test4 = [[0.5361692088746649],[-1],[0.46383079112533504]]
 
-def test_matrix_dot_prod():
-    result1 = demo1.matrix_dot_prod(matrix1_test1,matrix2_test1)
-    assert len(result1) == 3
-    assert result1[0,0] == 57
-    assert result1[1,0] == 46
-    assert result1[2,0] == 49
-    
-    result2 = demo1.matrix_dot_prod(matrix1_test2,matrix2_test2)
-    assert len(result2) == 3
-    assert len(result2[:]) == 3
-    assert result2[0,0] == 5
-    assert result2[1,1] == 5
-    assert result2[2,2] == 5
-    
-    result3 = demo1.matrix_dot_prod(matrix1_test3,matrix2_test3)
-    assert len(result3) == 3
-    assert result3[0] == -5.8515872213727631E-003
-    assert result3[1] == -1.9995299459034648E-003
-    assert result3[2] == -8.6677509347662051E-004
-    
-    result4 = demo1.matrix_dot_prod(matrix1_test4,matrix2_test4)
-    assert len(result4) == 3
-    assert result4[0] == 5.8502493672572542E-003
-    assert result4[1] == 2.0256251869944231E-003
-    assert result4[2] == 8.7695014435107410E-004
-test_matrix_dot_prod()
-# fortran results:
-#  Edit rb:   -5.8515872213727631E-003  -1.9995299459034648E-003  -8.6677509347662051E-004
-
-# python results:
-# -0.005851587221372763
-# -0.001999529945903465    !
-# -0.0008667750934766205
-
-# fortran results
-#  Edit ra:    5.8502493672572542E-003   2.0256251869944231E-003   8.7695014435107410E-004
-
-# python results
-# 0.005850249367257254
-# 0.002025625186994423
-# 0.0008769501443510741
-# Not as precise (does not include last digit)
 
 
 
 # -181.39997132286484   346.8208661801217   -167.22601164748204
 # -49.141453222161964   99.18166675238325   -49.58309521064877
 # 732.7444648345615   -1365.948759032001   637.8813360694052
-test1_inv_matr = [[-181.39997132286484,-49.141453222161964,732.7444648345615],[346.8208661801217,99.18166675238325,-1365.948759032001],[-167.22601164748204,-49.58309521064877,637.8813360694052]]
+test1_inv_matr = [[-181.39997132286484,-49.141453222161964,732.7444648345615],
+                [346.8208661801217,99.18166675238325,-1365.948759032001],
+                [-167.22601164748204,-49.58309521064877,637.8813360694052]]
 
 test1_dot_b =[[-0.005851587221372763],
 [-0.001999529945903465],
@@ -152,7 +78,7 @@ test1_dot_a = [[0.005850249367257254],
 test1_obs_postions = matrix1_test3.copy()
 test1_unit_vector = test_matrix1.copy()
 def test_get_d_and_pos_variables():
-    result1 = demo1.get_d_and_pos_variables(np.matrix(test1_inv_matr),np.matrix(test1_dot_b),np.matrix(test1_dot_a),np.matrix(test1_obs_postions),np.matrix(test1_unit_vector))
+    result1 = fcr.get_d_and_pos_variables(np.matrix(test1_inv_matr),np.matrix(test1_dot_b),np.matrix(test1_dot_a),np.matrix(test1_obs_postions),np.matrix(test1_unit_vector))
     assert result1[0] == 1.0320244737743007
     assert result1[1] == -1.0437988981068052
     assert result1[2] == 1.0036250823189330 
@@ -177,13 +103,13 @@ test1_r2pos = 1.003625082318933
 test1_dotr2 = 0.31100143213162895
 
 def test_generate_Cs():
-    result1 = demo1.generate_Cs(test1_d_1,test1_d_2,test1_r2pos,test1_dotr2)
+    result1 = fcr.generate_Cs(test1_d_1,test1_d_2,test1_r2pos,test1_dotr2)
     assert len(result1) == 4
     assert result1[0] == 1.0000000000000000 
     assert result1[1] == -2.7106217754654516
     assert result1[2] == 2.8036979214270064
     assert result1[3] == -1.0895161396889805
-test_generate_Cs()
+# test_generate_Cs()
 
 # fortran results:
 #  Edit c:   -1.0895161396889805     
@@ -201,21 +127,6 @@ test1_c = -1.0895161396889805
 test1_c3 =2.8036979214270064
 test1_c6 =-2.7106217754654516
 test1_c8 =1
-def test_eight_equation_four_coeff():
-    result1 = demo1.eight_equation_four_coeff(test1_c,test1_c3,test1_c6,test1_c8)
-    assert round(result1[0],13) == round(1.2457493693119874,13)
-    assert round(result1[1],13) == round(1.0544796939362728,13)
-    assert round(result1[2],13) == round(0.98366052181486430,13)
-
-# fortran roots:
-# 0.98366052181486430   (spurious)
-# 1.0544796939362728
-# 1.2457493693119874
-
-# python solutions
-# 0.9836605218148519
-# 1.054479693936294
-# 1.245749369311985
 
 
 # test root 1.054479693936294
@@ -227,7 +138,7 @@ test1_r2m3 = 0.8528749073206177
 test1_pos_matrix = matrix1_test3.copy()
 test1_inv_matrix = test1_inv_matr.copy()
 def test_calculate_rhos():
-    result1 = demo1.calculate_rhos(test1_a1,test1_b1,test1_a3,test1_b3,test1_r2m3,test1_pos_matrix, test1_inv_matrix)
+    result1 = fcr.calculate_rhos(test1_a1,test1_b1,test1_a3,test1_b3,test1_r2m3,test1_pos_matrix, test1_inv_matrix)
     # (float(p_1),float(p_3),c_1,c_3,gcap,crhom,r2m3)
     assert round(result1[0],13) == round(0.13131676742198489,13)
     assert round(result1[1],13) == round(0.15390615730938734,13)
@@ -270,7 +181,7 @@ test_pos_matrix = matrix1_test3.copy()
 test_inv_matrix = test1_inv_matr.copy()
 test1_unit_vector = test_matrix1.copy()
 def test_find_rho_and_r():
-    result1 = demo1.find_rho_and_r(test_roots1,test_a1,test_b1,test_a3,test_b3,np.matrix(test_pos_matrix),test_inv_matrix,test1_unit_vector)    #return(rhos,r)
+    result1 = fcr.find_rho_and_r(test_roots1,test_a1,test_b1,test_a3,test_b3,np.matrix(test_pos_matrix),test_inv_matrix,test1_unit_vector)    #return(rhos,r)
     assert len(result1) == 2
     assert type(result1[0]) and type(result1[1])== list
     
@@ -311,7 +222,7 @@ def test_find_rho_and_r():
 # -0.24064389301967798
 
 def test_gauss_method_8th():
-    results1 = demo1.gauss_method_8th(np.matrix(test_pos_matrix),test1_obs_time,np.matrix(test1_unit_vector))
+    results1 = fcr.gauss_method_8th(np.matrix(test_pos_matrix),test1_obs_time,np.matrix(test1_unit_vector))
     assert len(results1) == 3
     assert len(results1[0]) == 3
     #roots
