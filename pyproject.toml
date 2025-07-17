@@ -15,3 +15,7 @@ authors = [
 dependencies = [
 "numpy>= 2.3.1"
 ]
+
+[tool.setuptools.package.find]
+include = ["Gauss"]
+exclude = ["Test"]
