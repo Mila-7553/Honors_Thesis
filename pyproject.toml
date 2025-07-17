@@ -17,8 +17,4 @@ dependencies = [
 ]
 
 [tool.setuptools]
-include-package-data = false
-
-[tool.setuptools.package.find]
-include = ["Gauss"]
-exclude = ["Test"]
+packages = ["Gauss"]

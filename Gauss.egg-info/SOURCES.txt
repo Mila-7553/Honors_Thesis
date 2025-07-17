@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+Gauss/Fortran_Code_Replica.py
+Gauss/Gauss_Method.py
+Gauss/math_fucntions.py
+Gauss.egg-info/PKG-INFO
+Gauss.egg-info/SOURCES.txt
+Gauss.egg-info/dependency_links.txt
+Gauss.egg-info/requires.txt
+Gauss.egg-info/top_level.txt
+test/test_fortran_code_replica.py
+test/test_gauss_method.py
+test/test_math_functions.py
