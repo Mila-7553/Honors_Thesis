@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "example-project"
+name = "Gauss"
 version = "1.0.0"
-description = "An example Python project using setuptools"
+description = "Honor thesis work, with Gauss's method"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "MIT"
