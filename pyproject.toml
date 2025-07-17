@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "example-project"
+version = "1.0.0"
+description = "An example Python project using setuptools"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+{name = "Mila"}
+]
+dependencies = [
+"numpy>= 2.3.1"
+]
