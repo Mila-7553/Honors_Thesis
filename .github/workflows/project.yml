@@ -21,6 +21,7 @@ jobs:
         python -m pip install --upgrade pip
         sudo apt update && sudo apt install -y libegl1-mesa-dev
         pip install pytest
+        pip install coverage
         pip install numpy
         
     - name: Run tests
