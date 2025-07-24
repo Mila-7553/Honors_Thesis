@@ -2,8 +2,8 @@ import numpy as np
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-import math_fucntions as mf
-
+# import math_functions as mf
+from gauss import math_functions as mf
 
 
 mue = 1.7202098949957226E-002 **2 # Only global variable

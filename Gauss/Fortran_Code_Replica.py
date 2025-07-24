@@ -1,7 +1,8 @@
 
 import pytest
 import numpy as np
-import math_fucntions as mf
+# import math_functions as mf
+from gauss import math_functions as mf
 
 
 postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
