@@ -2,9 +2,9 @@ import numpy as np
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../Honor_thesis_Code")))
-# import math_functions as mf
-# from Gauss import math_fucntions as mf
-from gauss import math_functions as mf
+import math_fucntions as mf
+
+
 
 
 unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]

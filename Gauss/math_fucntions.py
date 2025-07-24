@@ -2,6 +2,7 @@
 
 import numpy as np
 
+
 def take_inverse_matrix(matrix):
     try:
         inverse_matrix = np.linalg.inv(matrix)

@@ -1,7 +1,7 @@
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../Honor_thesis_Code")))
-from gauss import fortran_code_replica as fcr
+import Fortran_Code_Replica as fcr
 import numpy as np
 
 
