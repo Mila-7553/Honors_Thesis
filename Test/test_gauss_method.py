@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../Honor_thesis_Code")))
-import Gauss_Method as gm
+from gauss import gauss_method as gm
 
 test1_times = [58577.489970740738,58583.545550740739,58590.545550740739]
 def test_calculate_delta_t():

@@ -2,7 +2,7 @@ import numpy as np
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../Honor_thesis_Code")))
-import math_fucntions as mf
+from gauss import math_fucntions as mf
 
 
 
