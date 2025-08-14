@@ -1,9 +1,14 @@
-
+"""
+[MJP Comment]: Add a description of the module here.
+"""
 import pytest
 import numpy as np
 from gauss import math_fucntions as mf
 
 
+# [MJP Comment]: If I understand correctly what these position_vector* and unit_vector* and observation_times variables are,
+# [MJP Comment]: these quantities should be moved into the `test_fortran_code_replica` module, and then you should add a
+# [MJP Comment]: description (in `test_fortran_code_replica.py`) of what these variables represent and where they come from.
 postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
 postion_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
 postion_vector3 = [-0.89451148183020490,-0.41779882542249258,-0.18111530838131065]
@@ -18,6 +23,9 @@ unit_matrix = np.matrix([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],[unit
 observation_times = [58577.489970740738,58583.545550740739,58590.545550740739]
 
 def get_tau_values(time_obs,sqrt_mu):
+    """
+    [MJP Comment]: Add a description of the function here (and do the same for all other functions).
+    """
     tau_1 = sqrt_mu * (time_obs[0] - time_obs[1]) 
     tau_3 = sqrt_mu * (time_obs[2] - time_obs[1])
     tau = tau_3 - tau_1

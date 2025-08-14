@@ -1,0 +1,23 @@
+2025-08-14
+Mila, I'm making a branch to explicitly document the comments/suggestions I have.
+All of the important comments are in this file, but I have also added some comments in the `fortran_code_replica.py`
+file itself.
+
+As you are currently working on the `test_fortran_code_replica.py` and `gauss_method.py` files, I will
+not comment on those today.
+
+(1) Change the `Test` directory name to `tests` [not essential, but it is the standard name people use in python]
+(2) Add a long description to the top of the `fortran_code_replica.py` file, explaining what the file does and that
+    it doesn't really get used in the rest of the code, but rather was just a starting point to ensure you
+    could accurately reproduce the results form the orbfit fortran code.
+    You might also emphasize (if it is true) that the variable-names employed in the code are deliberately chosen to
+    match those in the original Fortran code for easier comparison and understanding.
+(3) In `fortran_code_replica.py`, consider adding type hints to function signatures for better clarity and type checking.
+(4) In `fortran_code_replica.py`, add docstrings to all functions to explain their purpose and usage.
+(5) Move the position_vector* and unit_vector* and observation_times variables out of the `fortran_code_replica.py`
+    file and into the `test_fortran_code_replica.py` file
+(6) In the README.md file, start to add in some extract sections that explain how to ...
+    - download the code
+    - install the code
+    - run the tests
+    - etc
