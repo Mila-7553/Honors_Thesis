@@ -1,8 +1,11 @@
-
-import pytest
+'''
+This file is a replica of the fortran code used on fortran to produce a result for the gauss method using the 
+eigth degree equation, the content and procedurers ar in line with the procedure made within the fortran code, 
+and the results of this code are able to replicate the fortran results up to the 12th decimal place. 
+this code replica was made to get a further understanding into the eight degree gauss method, a more 'independent' 
+version that is not a replica can be found in the file gauss_method.py'''
 import numpy as np
 from gauss import math_fucntions as mf
-
 
 postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
 postion_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
