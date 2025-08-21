@@ -50,7 +50,7 @@ handling the 2D array structure can be a bit more complex.
 I suggest you do something approximately as follows:
 def calculate_values_for_cs(a_1, b_1, a_3, b_3, position_R, rho, B_matrix):
     # Ensure inputs are arrays
-    a_1, b_1, a_3, b_3 = map(np.atleast_1d, (a_1, b_1, a_3, b_3))
+    a_1, b_1, a_3, b_3 = np.atleast_1d(a_1, b_1, a_3, b_3)
     # Check that the shapes match
     if a_1.shape != b_1.shape or a_1.shape != a_3.shape or a_1.shape != b_3.shape:
         raise ValueError("Input arrays must have the same shape")
