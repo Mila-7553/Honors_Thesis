@@ -1,25 +1,44 @@
-'''Contains math functions that implement numpy such as dot products, matrix multiplication, and matrix inverses. 
+'''This file contains functions that make use of math utility functions built on NumPy, 
+including dot products, matrix multiplications, and matrix inverses.
 '''
-
 import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=np.exceptions.ComplexWarning)
 
-
 def take_inverse_matrix(matrix):
+    """This function uses numpy.linalg.inv and numpy.linalg.pinv to take the inverse of a provided matrix
+
+    Args:
+        matrix (np.ndarray): a matrix to be inversed
+
+    Returns:
+        np.ndarray: the inverse matrix
+    """
     try:
         inverse_matrix = np.linalg.inv(matrix)
-    except (np.linalg.LinAlgError,ValueError) as e:
-        if isinstance(e, np.linalg.LinAlgError):
-            print(f"Error: the matrix provided is not invertible {matrix}")
-            print("function: take_inverse")
-        else:
-            print(f'Error: the provided data {matrix} is not a matrix please provide different data.')
-            print("function: take_inverse")
-        exit() # can change to return a flag
+    except:
+        try:
+            inverse_matrix = np.linalg.pinv(matrix) # pseudo inverse function by numpy
+        except (np.linalg.LinAlgError,ValueError) as e:
+            if isinstance(e, np.linalg.LinAlgError):
+                print(f"Error: the matrix provided is not invertible {matrix}")
+                print("function: take_inverse")
+            else:
+                print(f'Error: the provided data {matrix} is not a matrix please provide different data.')
+                print("function: take_inverse")
+            exit() # can change to return a flag
     return inverse_matrix
 
 def matrix_dot_prod(matrix1,matrix2):
+    """Function to take the matrix dot product of the provided matrix1 dot provided matrix2
+
+    Args:
+        matrix1 (np.matrix): matrix to be dotted
+        matrix2 (np.matrix): matrix to be dotted
+
+    Returns:
+        np.ndarray: result of the dot product
+    """
     # only used by fortran replica
     try:
         mult = np.dot(matrix1,matrix2)
@@ -30,6 +49,17 @@ def matrix_dot_prod(matrix1,matrix2):
     return mult
 
 def eight_equation_four_coeff(c,c3,c6,c8):
+    """Function to get the roots for a polynomial of 8 degree provided the coefficient 0, 3, 6 and 8
+
+    Args:
+        c (np.array or float): the provided coefficient c
+        c3 (np.array or float): the provided coefficient c3
+        c6 (np.array or float): the provided coefficient c6
+        c8 (np.array or float): the provided coefficient c8
+
+    Returns:
+        np.array: returns the positive and real roots generated from the provided coefficients
+    """
     if type(c) == list or type(c) == np.ndarray and len(c6) == len(c8):
         size = len(c6)
     else:
@@ -57,17 +87,5 @@ def eight_equation_four_coeff(c,c3,c6,c8):
     positive_roots = [-100,-100,-100] # still need to test this values are able to run without errors. 
     positive_roots = [roots[np.isreal(roots) & (roots.real >= 0)].real
     for roots in roots_all] # makes sure they stay in their apporpiate sublist
+    positive_roots = np.array(positive_roots,dtype=np.longdouble).squeeze()
     return positive_roots
-
-onec = 1.0895161396889808
-onec3 = -2.8036979214269007
-onec6 = 2.7106217754653157
-onec8 = -1
-# eight_equation_four_coeff(onec,onec3,onec6,onec8)
-
-twoc = 10.940364370765677
-twoc3 = -16.968656069203668
-twoc6 = 6.722062703325108
-twoc8 = -1
-
-# eight_equation_four_coeff([onec,twoc],[onec3,twoc3],[onec6,twoc6],[onec8,twoc8])
