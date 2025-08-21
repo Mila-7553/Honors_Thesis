@@ -5,6 +5,7 @@ This file runs tests using only test sample 1, and the results from the python c
 The calculations are performed entirely in Python (no Fortran execution).
 It also includes a comparison between the Python-generated results 
 and the corresponding Fortran results for validation.
+The fortran results were obtained by running the orbfit fortran code with the test sample 1 data.
 '''
 import sys
 import os
@@ -12,22 +13,27 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../H
 from gauss import fortran_code_replica as fcr
 import numpy as np
 
+# [Add a description of what these unit_vector* quantities are and how they were obtained ... ]
 unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]
 unit_vector2 = [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
 unit_vector3 = [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
 unit_vector_matrix1 = np.matrix([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],
                                 [unit_vector1[1],unit_vector2[1],unit_vector3[1]],
                                 [unit_vector1[2],unit_vector2[2],unit_vector3[2]]])
+# [Add a description of what these quantities are and how they were obtained ... ]
 test1_obs_time = [58577.489970740738,58583.545550740739,58590.545550740739]
 sqr_mue = 1.7202098949957226E-002
 tau_test1 = [0.22458337900908587,-0.10416868635938527,0.12041469264970059]
 
+# [Add a description of what these position_vector* quantities are and how they were obtained ... ]
 position_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
 position_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
 position_vector3 = [-0.89451148183020490,-0.41779882542249258,-0.18111530838131065]
 position_matrix1 = np.matrix([[position_vector1[0],position_vector2[0],position_vector3[0]],
                     [position_vector1[1],position_vector2[1],position_vector3[1]],
                     [position_vector1[2],position_vector2[2],position_vector3[2]]])
+
+# [Add a description of what the various quantities below are and how they were obtained ... ]
 inverse_matrix = [[-181.39997132286484,-49.141453222161964,732.7444648345615],
                 [346.8208661801217,99.18166675238325,-1365.948759032001],
                 [-167.22601164748204,-49.58309521064877,637.8813360694052]]
@@ -49,8 +55,7 @@ test1_root2_r2m3 = 0.8528749073206177 # root2 1.054479693936294
 test_roots1 = 1.245749369311985
 
 def test_get_tau_values():
-    """A test for the function get_tau_values on the file fortran_code_replica.py, that provided. test 
-    are performed on the returned.
+    """A test for the function `fortran_code_replica.get_tau_values` function
     
     Provided values
         test1_obs_time = [58577.489970740738,58583.545550740739,58590.545550740739]
@@ -68,10 +73,22 @@ def test_get_tau_values():
         tau3:   0.12041469264970059  
         
     """
-    result1 = fcr.get_tau_values(test1_obs_time,sqr_mue)
-    assert result1[0] == 0.22458337900908587
-    assert result1[1] == -0.10416868635938527
-    assert result1[2] == 0.12041469264970059
+
+    # [ I'd recommend restructuring the test a little to more clearly describe where the numbers come from ... ]
+    # [ My text below is only a suggestion and you should read it to ensure that I am correct! ]
+    # Expected values for tau13, tau1, tau3
+    # These were calculated using the orbfit fortran code, using `test1_obs_time` as the input data
+    # The orbfit fortran values for tau13, tau1, tau3 were printed out and then stored in the variable `tau_test1`
+    expected_result = tau_test1
+
+    # Call the function that we want to test
+    result = fcr.get_tau_values(test1_obs_time,sqr_mue)
+
+    # Check that the result matches the expected values
+    assert np.allclose(result, expected_result, rtol=1e-9, atol=1e-9)
+    # assert result1[0] == 0.22458337900908587
+    # assert result1[1] == -0.10416868635938527
+    # assert result1[2] == 0.12041469264970059
 
 def test_make_a_b():
     """A test for the function make_a_b on the file fortran_code_replica.py, that provided tau. tau1, 

@@ -1,0 +1,40 @@
+Aug 21st 2025
+
+(1)
+I have made some suggested comments in the `fortran_code_replica.py` file.
+I think that all of the suggestions I made in there relate to clarifying the comments describing the code
+
+(2)
+I have made a few suggested comments in the `test_fortran_code_replica.py` file.
+These mainly relate to the need to describe in more detail where the expected test-results are coming from.
+ - I.e. That you got them from running the orbfit fortran code, and that you printed out all of the variables,
+   and that you then copied those values into the test file and are using them as a means to test that your
+   python version is working correctly
+
+(3)
+I made a suggestion to restructure the `test_get_tau_values` function in the `test_fortran_code_replica.py` file.
+Again, this is primarily to clarify where the test values come from.
+
+(4)
+You should probably clarify other functions in the `test_fortran_code_replica.py` file to ensure that they also
+clearly describe where the results are coming from
+
+(5)
+You should rename the `math_fucntions.py` to `math_functions.py`
+You will then need to refactor the import statements in the other files to reflect this change
+
+(6)
+In the `test_math_functions.py` file, I think it would be better and easier to read if you move the
+test variables inside the function where you are doing the testing.
+And also, I think you should put the expected numerical results inside appropriate variables
+I.e. instead of writing
+```
+    assert float(results[0,0]) == -181.39997132286484
+    assert float(results[1,0]) == 346.82086618012170
+    assert float(results[2,0]) == -167.22601164748204
+```
+write something like
+```
+    expected_results = [-181.39997132286484, 346.82086618012170, -167.22601164748204]
+    assert np.allclose(results[:,0], expected_results)
+```

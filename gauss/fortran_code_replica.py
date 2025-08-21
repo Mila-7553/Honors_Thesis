@@ -1,10 +1,16 @@
 '''
-This file is a replica of the fortran code used to produce a result for the gauss method 
-using the eight degree equation, the content and procedures and variable names are 
+This file is a replica of the fortran code used [provide a URL link to the orbfit code that you are talking about]
+to produce a result for the gauss method using the eight degree equation.
+The content and procedures and variable names are
 the same as the one presented within the fortran code, and the results of this 
-code are able to replicate the fortran results up to the 12th decimal place. this code replica
-was made to get a further understanding into the eight degree gauss method, a more 'independent' 
-version that is not a replica can be found in the file gauss_method.py'''
+code are able to replicate the fortran results up to the 12th decimal place.
+[This `fortran_code_replica` routine was only created as a starting point to ensure that the results of the
+orbfit fortran code could be numberically replicated. To gain a more detailed understanding of the gauss method, a
+new, independent version was created in the file `gauss_method.py`, and it is the code in `gauss_method.py` that is
+primarily used for the majority of the calculations in this package.]
+]
+'''
+
 import numpy as np
 from gauss import math_fucntions as mf
 from gauss import demo 
@@ -26,8 +32,9 @@ def get_tau_values(time_obs: list,rootgm: float = 1.7202098949957226E-002):
     return (tau,tau_1,tau_3)
 
 def make_a_b(tau: float,tau1: float,tau3:float):
-    """provided three tau values (tau,tau_1,tau_3), calculated with the observation time
-    it produces the a_1,b_1,a_3,b_3 necessary for the gauss method.
+    """
+    Calculates the a_1,b_1,a_3,b_3 necessary for the gauss method.
+    (NB: the input tau values are calculated using the `get_tau_values` function)
 
     Args:
         tau (float): tau value calculated using the time observations mathematical 
@@ -68,8 +75,9 @@ def get_d_and_pos_variables(sinv0:np.matrix,rb:np.matrix,ra:np.matrix,xt,esse0:n
     return (a2star, b2star, float(r22),float(s2r2))
 
 def generate_Cs(a2star:float,b2star: float,r22: float,s2r2: float):
-    """Provided with a2star:float,b2star: float,r22: float,s2r2 calculated from function get_d_and_pos_variables
-    calculates the coefficient values for the eight degree equation in the gauss method.
+    """
+    Calculates the coefficient values for the eight degree equation in the gauss method.
+    (NB: a2star,b2star,r22 & s2r2 are calculated using function `get_d_and_pos_variables`)
 
     Args:
         a2star (float): a float value calculated from function get_d_and_pos_variables
@@ -112,10 +120,10 @@ def calculate_rhos(a1: float,b1: float,a3: float,b3: float,r2m3: float,xt:np.mat
     return (float(rho_1),float(rho_3),c_1,c_3,gcap,crhom,r2m3)
 
 def find_rho_and_r(root: float,a1: float,b1: float,a3: float,b3: float,xt:np.matrix,sinv0:np.matrix,esse0: np.matrix):
-    """This function depends on calculate_rhos. 
-    This function provided the root, a1, b1, a3, b3, observer position matrix xt, unit vector esse0, and the inverse of the 
-    unit vector sinv0, to calculate the rho values, and the the position of the asteroid xp 
-    
+    """
+    This function calculate the rho values, and the position of the asteroid xp
+    This function depends on calculate_rhos.
+
     Args:
         root (float): The current root in question solved from the eight degree equation
         a1 (float): a1 value calculated from function make_a_b
@@ -135,11 +143,23 @@ def find_rho_and_r(root: float,a1: float,b1: float,a3: float,b3: float,xt:np.mat
     return(rhos,xp)
 
 def gauss_method_8th(xt,times_obs:list,esse0):
-    """main function that call on and depends on functions matrix_dot_prod, take_inverse_matrix, eight_equation_four_coeff from the math_fucntions.py file, and on local functions
-    get_tau_values, make_a_b, get_d_and_pos_variables, generate_Cs and find_rho_and_r. 
-    
-    This function provided the observer position xt, tree times of observations in time_obs, and the unit vector of observation as esse0, it calculates the gauss method that 
-    produces multiple roots, and for each of the roots calculates the position of the asteroid xp, and the rho values
+    """
+    This is the main function that evaluates the "gauss-method" to calculates the position of the asteroid, xp,
+    as well as the rho values.
+
+    It uses the eight degree equation to find the roots.
+    It may produce multiple roots
+    (for each of the roots it calculates the position of the asteroid xp, and the rho values)
+
+    It depends upon the following functions from the math_fucntions.py file
+    matrix_dot_prod,
+    take_inverse_matrix,
+    eight_equation_four_coeff
+    It depends upon the following local functions
+    get_tau_values,
+    make_a_b,
+    get_d_and_pos_variables,
+    generate_Cs and find_rho_and_r.
 
     Args:
         xt (list or np.matrix): _description_
