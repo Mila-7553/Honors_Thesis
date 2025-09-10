@@ -1,0 +1,56 @@
+Some notes related to
+(a) research goals
+(b) research timeline
+ - thesis 
+ - presentation (for Portugal)
+(c) thesis suggestions
+
+---------------------------------------
+Research Goals 
+[these are the things we discussed in our last meeting at the end of August] 
+
+(1) 
+(1a) Get differential corrections code working
+ - Predict observations 
+ - Optimize orbits
+(1b) Understand 
+
+(2) Accuracy of Fitting 
+(2a) Understand how ACCURATE a gauss-fit orbit is (compared to the original orbit)
+ - Take an input orbit, O_i
+ - Use O_i to simulate 3 perfect observations 
+ - Use Gauss to generate a fitted orbit, O_f
+ - Compare O_i & O_f
+ - Use Diff. Correction method to get O_D
+ - Is O_D closer to O_i than O_f?
+(2b) Understand uncertainties [OPTIONAL]
+ - Generate observations that have NOISE/ERROR added to them 
+ - Fit using Gauss & Diff-Corr
+ - How do errors affect the O_f (& O_D) compared to the original O_i ?
+ - Do this REPEATEDLY 
+
+(3) Multiple Roots [OPTIONAL: Given the presentation in Portugal, I suggest you skip this part ]
+ - Understand the geometry of why / when you get multiple roots 
+
+
+---------------------------------------
+Approximate Schedule
+[Altered to account for giving a presentation in Portugal] 
+
+Sept 11: Get Diff Corr algorithm working 
+Sept 18: Write up introduction to Thesis
+Sept 25: Improve current written Thesis text related to current Gauss's method code
+Oct 9 : Write up presentation for Portugal : first 2/3 will use the introduction to Thesis, last 1/3 will use the write up of the Gauss's method code
+Oct 23: Write-Up Diff Corr section of Thesis [shifted later than originally planned]
+Nov 06: Accuracy of Fitting [2a]
+Nov 20: Understanding Uncertainties [2b]
+Dec 04 : Finalize Written Thesis 
+
+
+---------------------------------------
+Thesis Suggestions 
+[from conversations with other supervisors]
+ - For both the Thesis introduction and the presentation in Portugal, make sure to explain the big-picture in a simple way: As an example, if you immediately start talking about orbital elements, most of your audience will be confused. So start simple, and build up the complexity gradually. 
+ - For any given section (e.g. on Differential Corrections), make sure that you have different sub-sections that emphasize (a) the astronomy part, and (b) the computational aspect, and for the computational aspect, make clear what problems you had to solve, what approach you took, how you tested your results, etc
+ - It will probably be a good idea to provide some/all of the code in an appendix (in addition to linking to the github repo)
+ - Use a formal latex layout for the thesis (that Prof. Gross can supply)
