@@ -1,0 +1,23 @@
+Some suggestions related to desirable content to include in both 
+(a) Your thesis introduction;
+(b) The first half / two-thirds of your talk in Portugal. 
+
+N.B. I don't want to write your thesis for your, so I'll restrict myself to just listing some important 
+topics that I think you should cover, as well as some suggested things to do & not-do (to avoid confusing 
+your readers/audience) 
+
+High Level Overview [not necessarily in this order] 
+ - Why did Gauss want to calculate the orbits of asteroids ? 
+ - Why do we want to calculate the orbits of asteroids / satellites ?
+ - Perhaps provide some historical background to note that in order to solve this problem, 
+   Gauss invented a *lot* of mathematics, including the Gaussian distribution and least-squares fitting
+ - Be able to provide a very short overview of Gauss' method (you then give more details later on) 
+ - Are there better methods? - Yes, tools like orbfit: but when you only have ~3 observations, Gauss' method is just as good and is *fast*
+
+High Level Summary of Gauss' Method [this is probaly just what you already have in your high-] 
+
+
+More Detailed Topics [You probably need to get to these slightly later on in the intro/talk] 
+ - What are Keplerian elements?
+ - What are Cartesian elements ?
+ - Why is there any need to convert back and forth between them (why don't you just stick with one of them) ?
