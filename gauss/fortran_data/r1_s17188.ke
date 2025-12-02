@@ -1,0 +1,20 @@
+# selected preliminary orbit CAR -0.83606191165353250      -0.53229599591621501        2.5920493975525316E-003   8.9775543621979960E-003  -1.4456519664251436E-002  -2.0345610056057492E-005   58596.545459791363        9.9999999999999997E+098 F F  -9.9900000000000002       0.14999999999999999                0         500
+format  = 'OEF2.0'       ! file format
+rectype = 'ML'           ! record type (1L/ML)
+refsys  = ECLM J2000     ! default reference system
+END_OF_HEADER
+17188
+! Keplerian elements: a, e, i, long. node, arg. peric., mean anomaly
+KEP     0.962219    0.032075       0.165      97.385     314.938     158.885
+MJD   58596.5455 TDT
+MAG  -9.990  0.150
+! Non-grav parameters: model used, actual number in use, dimension
+LSP   0  0    0
+! PERIHELION    0.9314
+! APHELION    0.9931
+! ANODE   -0.04292
+! DNODE   -0.03243
+! MOID    0.01393
+! PERIOD         344.7540
+! PHA T
+! VINFTY    0.0000

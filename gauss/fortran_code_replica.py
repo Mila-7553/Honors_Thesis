@@ -22,11 +22,11 @@ def get_tau_values(time_obs: list,rootgm: float = 1.7202098949957226E-002):
     """
     tau_1 = rootgm * (time_obs[0] - time_obs[1]) 
     tau_3 = rootgm * (time_obs[2] - time_obs[1])
-    tau = tau_3 - tau_1
-    return (tau,tau_1,tau_3)
+    tau13 = tau_3 - tau_1
+    return (tau13,tau_1,tau_3)
 
-def make_a_b(tau: float,tau1: float,tau3:float):
-    """provided three tau values (tau,tau_1,tau_3), calculated with the observation time
+def make_a_b(tau13: float,tau1: float,tau3:float):
+    """Provided three tau values (tau,tau_1,tau_3), calculated with the observation time
     it produces the a_1,b_1,a_3,b_3 necessary for the gauss method.
 
     Args:
@@ -40,10 +40,10 @@ def make_a_b(tau: float,tau1: float,tau3:float):
     Returns:
         tuple: The resulting values as a tuple (a_1,b_1,a_3,b_3)
     """
-    a_1 = tau3 / tau
-    b_1 = a_1 * (tau**2 - tau3**2) / 6
-    a_3 = -tau1 / tau
-    b_3 = a_3 * (tau**2 - tau1**2) / 6
+    a_1 = tau3 / tau13
+    b_1 = a_1 * (tau13**2 - tau3**2) / 6
+    a_3 = -tau1 / tau13
+    b_3 = a_3 * (tau13**2 - tau1**2) / 6
     return (a_1,b_1,a_3,b_3)
 
 def get_d_and_pos_variables(sinv0:np.matrix,rb:np.matrix,ra:np.matrix,xt,esse0:np.matrix):
@@ -59,11 +59,8 @@ def get_d_and_pos_variables(sinv0:np.matrix,rb:np.matrix,ra:np.matrix,xt,esse0:n
         tuple: a tuple of length four containing the resulting values (a2star, b2star, r22,s2r2)
     """
     a2star = float(sinv0[1,0]) * float(ra[0,0]) + float(sinv0[1,1])* float(ra[1,0]) + float(sinv0[1,2]) * float(ra[2,0]) 
-
     b2star = float(sinv0[1,0] * rb[0,0] + sinv0[1,1] * rb[1,0] + sinv0[1,2] * rb[2,0]) 
-    
     r22 = xt[0,1]**2 +xt[1,1]**2 + xt[2,1]**2   
-
     s2r2 = esse0[0,1]* xt[0,1] + esse0[1,1]* xt[1,1] + esse0[2,1]*xt[2,1] 
     return (a2star, b2star, float(r22),float(s2r2))
 
@@ -135,8 +132,10 @@ def find_rho_and_r(root: float,a1: float,b1: float,a3: float,b3: float,xt:np.mat
     return(rhos,xp)
 
 def gauss_method_8th(xt,times_obs:list,esse0):
-    """main function that call on and depends on functions matrix_dot_prod, take_inverse_matrix, eight_equation_four_coeff from the math_fucntions.py file, and on local functions
-    get_tau_values, make_a_b, get_d_and_pos_variables, generate_Cs and find_rho_and_r. 
+    """main function that call on and depends on functions matrix_dot_prod, 
+    take_inverse_matrix, eight_equation_four_coeff from the math_fucntions.py 
+    file, and on local functions get_tau_values, make_a_b, 
+    get_d_and_pos_variables, generate_Cs and find_rho_and_r. 
     
     This function provided the observer position xt, tree times of observations in time_obs, and the unit vector of observation as esse0, it calculates the gauss method that 
     produces multiple roots, and for each of the roots calculates the position of the asteroid xp, and the rho values
@@ -153,11 +152,11 @@ def gauss_method_8th(xt,times_obs:list,esse0):
     """
     xt = np.matrix(xt)
     esse0 = np.matrix(esse0)
-    mu = 1.7202098949957226E-002 # mue
+    mu = 1.7202098949957226E-002 # mu
     sinv0 = mf.take_inverse_matrix(esse0.copy())
-    tau, tau_1, tau_3 =get_tau_values(times_obs,mu)
+    tau13, tau_1, tau_3 =get_tau_values(times_obs,mu)
     
-    a_1, b_1, a_3, b_3 = make_a_b(tau,tau_1,tau_3)
+    a_1, b_1, a_3, b_3 = make_a_b(tau13,tau_1,tau_3)
     
     matrix_a = [[a_1],[-1],[a_3]]
     matrix_b = [[b_1],[0],[b_3]]
@@ -165,7 +164,6 @@ def gauss_method_8th(xt,times_obs:list,esse0):
     rb = mf.matrix_dot_prod(xt,matrix_b)
     a2star, b2star, r22,s2r2p = get_d_and_pos_variables(sinv0,rb,ra,xt,esse0)
     c_8,c_6,c_3,c = generate_Cs(a2star, b2star, r22,s2r2p)
-    
     roots = mf.eight_equation_four_coeff(c,c_3,c_6,c_8)
     results = []
     for i in range(len(roots)):

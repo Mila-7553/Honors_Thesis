@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import sys
 import os
@@ -5,27 +6,31 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../H
 from gauss import gauss_method as gm
 np.set_printoptions(threshold=np.inf,precision=20)
 
+# Test values aqure from sample one observations and fortran
 test1_ra_dec = [2.1260971174823160,-7.2033616739254860E-002]
 test2_ra_dec =[2.2018577151544165,-9.1656450482163324E-002]
 test3_ra_dec = [2.2892342062190609,-0.11198856664053504]
+test1_values_ra_dec = np.array([[test1_ra_dec[0],test2_ra_dec[0],test3_ra_dec[0]],
+                            [test1_ra_dec[1],test2_ra_dec[1],test3_ra_dec[1]]])
 test1_times = [58577.489970740738,58583.545550740739,58590.545550740739]
+mu = 1.7202098949957226E-002    # value from Fortran code
+test1_rho =np.array([[-0.52583173389865490, -0.58752551582774715, -0.65408632170819792 ],   # x values
+                    [ 0.84753826708376778 , 0.80401266287853912, 0.74811896536180311 ], # y values
+                    [-7.1971337723971657E-002,-9.1528171522763241E-002, -0.11175463041961636]]) # Z values
+
+# print(test1_rho.T)
+test1_position_R = [[-0.96969860078090808, -0.94067474928282591 , -0.89451148183020490 ],
+                            [-0.22449591050121329, -0.31618137964297799 ,  -0.41779882542249258 ],
+                            [-9.7312854877537963E-002 ,-0.13705996332878803 ,-0.18111530838131065]]
+
+# test input values from running python code that produced the expected result
 test_d_t1 = -6.055580000000191
 test_d_t3 = 7
 testd_t = 13.055580000000191
-mu = 1.7202098949957226E-002
-unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]
-unit_vector2 = [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
-unit_vector3 = [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
-test1_rho = np.array([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],[unit_vector1[1],unit_vector2[1],unit_vector3[1]],[unit_vector1[2],unit_vector2[2],unit_vector3[2]]])
-test1_values_ra_dec = [test1_ra_dec,test2_ra_dec,test3_ra_dec]
 test1_a_1 = 0.5361692088746649
 test1_b_1 = 10.85279479419046
 test1_a_3 = 0.4638307911253351
 test1_b_3 = 10.341735205810208
-postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
-postion_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
-postion_vector3 = [-0.89451148183020490,-0.41779882542249258,-0.18111530838131065]
-test1_position_R = np.array([[postion_vector1[0],postion_vector2[0],postion_vector3[0]],[postion_vector1[1],postion_vector2[1],postion_vector3[1]],[postion_vector1[2],postion_vector2[2],postion_vector3[2]]])
 test1_B_matrix = np.array([[115.62989788917604,85.74605554189431,50.08435887453609],
 [-225.65321388125662,-170.38814074716754,-104.27900008385723],
 [ 111.21597772750607,85.55454550094318,54.77127152627216]])
@@ -35,11 +40,87 @@ test1_magnitude_R_2 = 1.0018109014773862
 test1_pos_2_dot_p2 = 0.31100143213162895
 test1_1_root =1.0544796939365233
 
+
+# Expected Results:
+# test_calculate_unit_vector
+exp_unit_vec1 = np.array([[-0.52583173389865490],[0.84753826708376778],[-7.1971337723971657E-002]]) # Expected result of unit vector 1
+exp_unit_vec2 = np.array([[-0.58752551582774715],[0.80401266287853912],[-9.1528171522763241E-002]])
+exp_unit_vec3 = np.array([[-0.65408632170819792],[0.74811896536180311],[-0.11175463041961636]])
+exp_unit_vec4 = np.array(([[-0.5258317338986549, -0.58752551582774715, -0.65408632170819792],
+                                    [0.84753826708376778, 0.80401266287853912, 0.74811896536180311],
+                                    [-7.1971337723971657E-002, -9.1528171522763241E-002, -0.11175463041961636]]))
+
+# test_calculate_delta_t
+exp_cal_dt1_0 = -0.10416868635938527
+exp_cal_dt1_1 = 0.12041469264970059  
+exp_cal_dt1_2 = 0.22458337900908587 # is rounded to 15
+
+# test_calculate_a_and_b
+exp_cal_ab1_0 = 0.53616920887466490 
+exp_cal_ab1_1 = 3.2114744736032957E-003
+exp_cal_ab1_2 = 0.46383079112533504
+exp_cal_ab1_3 = 3.0602457022409226E-003
+
+# test_calculate_values_for_cs
+exp_cal_valcs1_0 = 1.0320244737742499
+exp_cal_valcs1_1 = -3527.3938312967603
+exp_cal_valcs1_2 = 1.0018109014773862
+exp_cal_valcs1_3 = 0.31100143213162895
+
+# test_calculate_rhos_and_r
+exp_calc_rhosr1_10 = 0.13131676742198489
+exp_calc_rhosr1_11 = 0.14179458528999755 # rho 2
+exp_calc_rhosr1_12 =  0.15390615730938734 # rho 3
+exp_calc_rhosr1_200 = -1.0387491242843767 # matrix component r_1 (1,0)
+exp_calc_rhosr1_210 = -0.11319992500134204 # matrix component r_1 (2,0)
+exp_calc_rhosr1_220 =  -0.10676389829448588 # matrix component r_1 (3,0)
+exp_calc_rhosr1_201 = -1.0239826861469132 # matrix component r_2 (1,0)
+exp_calc_rhosr1_211= -0.20217673754220894 # matrix component r_2 (2,0)
+exp_calc_rhosr1_221= -0.15003816245221002 # matrix component r_2 (3,0)
+exp_calc_rhosr1_202= -0.99517939415294532 # matrix component r_3 (1,0)
+exp_calc_rhosr1_212= -0.30265871025338281 # matrix component r_3 (2,0) # need to fix
+exp_calc_rhosr1_222= -0.19831503411072457 # matrix component r_2 (3,0)
+
+# test_gauss_method
+exp_gasuss1_00 = 1.2457493693119874 # root
+exp_gasuss1_2_000 = -1.2110280216108740 # matrix component r_1 (1,0)
+exp_gasuss1_2_010 = 0.16448007923237593 # matrix component r_1 (2,0)
+exp_gasuss1_2_020 = -0.13034395613973659 # matrix component r_1 (3,0)
+exp_gasuss1_2_001 = -1.2298020505564962 # matrix component r_2 (1,0)
+exp_gasuss1_2_011 = 7.9481455664558387E-002 # matrix component r_2 (2,0)
+exp_gasuss1_2_021 = -0.18210191046125732 # matrix component r_2 (3,0)
+exp_gasuss1_2_002 = -1.2429250805903169 # matrix component r_3 (1,0)
+exp_gasuss1_2_012 = -1.9296651670140053E-002 # matrix component r_3 (2,0)
+exp_gasuss1_2_022 = -0.24064389301967798 # matrix component r_2 (3,0)
+exp_gasuss1_01 = 1.0544796939362728 # root
+exp_gasuss1_2_100 = -1.0387491242843767 # matrix component r_1 (1,0)
+exp_gasuss1_2_110 = -0.11319992500134204 # matrix component r_1 (2,0)
+exp_gasuss1_2_120 = -0.10676389829448588 # matrix component r_1 (3,0)
+exp_gasuss1_2_101 = -1.0239826861469132 # matrix component r_2 (1,0)
+exp_gasuss1_2_111 = -0.20217673754220894 # matrix component r_2 (2,0)
+exp_gasuss1_2_121 = -0.15003816245221002 # matrix component r_2 (3,0)
+exp_gasuss1_2_102 = -0.99517939415294532 # matrix component r_3 (1,0)
+exp_gasuss1_2_112 = -0.30265871025338281# matrix component r_3 (2,0)
+exp_gasuss1_2_122 = -0.19831503411072457 # matrix component r_2 (3,0)
+
+exp_gasuss1_02 = 0.98366052181486430 # root
+exp_gasuss1_2_200 = -0.93754156602517169 # matrix component r_1 (1,0)
+exp_gasuss1_2_210 = -0.27632678291615598 # matrix component r_1 (2,0)
+exp_gasuss1_2_220 = -9.2911475768203619E-002 # matrix component r_1 (3,0)
+exp_gasuss1_2_201 = -0.90268621931130066 # matrix component r_2 (1,0)
+exp_gasuss1_2_211 = -0.36816764801502594 # matrix component r_2 (2,0)
+exp_gasuss1_2_221 = -0.13114188727343115 # matrix component r_2 (3,0)
+exp_gasuss1_2_202 = -0.84968459279566322 # matrix component r_3 (1,0)
+exp_gasuss1_2_212 = -0.46907010985682873 # matrix component r_3 (2,0)
+exp_gasuss1_2_222 = -0.17345636146458968 # matrix component r_2 (3,0)
+
+
+
 def test_calculate_unit_vector():
     """
-    A test for the function calculate_unit_vector on the file gauss_method.py, that provided the Right Ascencion (RA) and 
-    Declination (DEC) observation, provieds the Equritorial helocentric postion of the object.
-    Three test are performend each with a different RA and DEC values, to check the return 
+    A test for the function calculate_unit_vector on the file gauss_method.py, that provided the Right ascension (RA) and 
+    Declination (DEC) observation, provided the equatorial heliocentric position of the object.
+    Three test are performed each with a different RA and DEC values, to check the return 
     position coordinate by the function. 
     
     Provided values
@@ -59,20 +140,19 @@ def test_calculate_unit_vector():
         vector 2 [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
         vector 3 [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
         
-    Due to numpy matrice data type claulation are only precide to the 17 digit. 
+    Due to numpy precise to the 16 digit. 
     """
-    result1 = gm.calculate_unit_vector(test1_ra_dec[0],test1_ra_dec[1])
-    result2 = gm.calculate_unit_vector(test2_ra_dec[0],test2_ra_dec[1])
-    result3 = gm.calculate_unit_vector(test3_ra_dec[0],test3_ra_dec[1])
-    result4 = gm.calculate_unit_vector([test1_ra_dec[0],test2_ra_dec[0],test3_ra_dec[0]],[test1_ra_dec[1],test2_ra_dec[1],test2_ra_dec[1]])
+    result1 = np.array(gm.calculate_unit_vector(test1_ra_dec[0],test1_ra_dec[1]))
+    result2 = np.array(gm.calculate_unit_vector(test2_ra_dec[0],test2_ra_dec[1]))
+    result3 = np.array(gm.calculate_unit_vector(test3_ra_dec[0],test3_ra_dec[1]))
+    result4 = np.array(gm.calculate_unit_vector([test1_ra_dec[0],test2_ra_dec[0],
+                                                test3_ra_dec[0]],[test1_ra_dec[1],
+                                                test2_ra_dec[1],test3_ra_dec[1]]))
     assert len(result1) == len(result2) == len(result3) == 3
-    assert result1.all() == np.array([-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]).all()
-    assert result2.all() == np.array([-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]).all()
-    assert result3.all() == np.array([-0.65408632170819792,0.74811896536180311,-0.11175463041961636]).all()
-    assert result4.all() == np.array(([[-0.5258317338986549, 0.8475382670837678, -0.07197133772397166],
-                                    [-0.5875255158277471, 0.8040126628785391, -0.09152817152276324],
-                                    [-0.6540863217081979, 0.7481189653618031, -0.11175463041961636]])).all()
-test_calculate_unit_vector()
+    assert np.array_equal(result1,exp_unit_vec1)
+    assert np.array_equal(result2,exp_unit_vec2)
+    assert np.array_equal(result3,exp_unit_vec3)
+    assert np.array_equal(result4,exp_unit_vec4)
 
 def test_calculate_delta_t():
     """A test for the function calculate_delta_t on the file gauss_method.py, that provided the time time 
@@ -91,15 +171,14 @@ def test_calculate_delta_t():
             tau1 =  -0.10416868635938527     
             tau3 =   0.12041469264970059  
     """
-    result = gm.calculate_delta_t(test1_times)
-    # Multiply by 1.7202098949957226E-002 (mue square), to compare with the fortran values
-    assert result[0] * 1.7202098949957226E-002  == -0.10416868635938527,15 # -6.055580000000191
-    assert result[1] * 1.7202098949957226E-002 == 0.12041469264970059  # 7
-    assert round(result[2] * 1.7202098949957226E-002,15) == round(0.22458337900908587,15) # 13.055580000000191
+    result = gm.calculate_delta_t(test1_times[0],test1_times[1],test1_times[2])
+    assert float(result[0][0]) * 1.7202098949957226E-002  == exp_cal_dt1_0 # -6.055580000000191
+    assert float(result[1][0]) * 1.7202098949957226E-002 == exp_cal_dt1_1  # 7
+    assert round(result[2][0] * 1.7202098949957226E-002,15) == round(exp_cal_dt1_2,15) # 13.055580000000191
 
 def test_calculate_a_and_b():
     """A test for the function calculate_a_and_b on the file gauss_method.py, the tau values of the gauss method it
-    generates the nessecary a_1, b_1, a_3, and b_3 values, this test is to make the function works correctly 
+    generates the necessary a_1, b_1, a_3, and b_3 values, this test is to make the function works correctly 
     and is capable of calculate the expected values
     
     Provided Values:
@@ -122,12 +201,11 @@ def test_calculate_a_and_b():
             Edit b3:    3.0602457022409226E-003
     """
     result = gm.calculate_a_and_b(test_d_t1,test_d_t3,testd_t)
-    
     # Some values are multiplied by mu square (result [1] and [3]) to match the scaled values from the Fortran code.
-    assert result[0] == 0.53616920887466490 
-    assert round(result[1] * mu** 2,17) == round(3.2114744736032957E-003,17)
-    assert round(result[2],15) == round(0.46383079112533504,15)
-    assert round(result[3] *mu **2,17) == round(3.0602457022409226E-003,17)
+    assert result[0] == exp_cal_ab1_0 
+    assert round(result[1][0] * mu** 2,17) == round(exp_cal_ab1_1,17)
+    assert round(result[2][0],15) == round(exp_cal_ab1_2,15)
+    assert round(result[3][0] *mu **2,17) == round(exp_cal_ab1_3,17)
     
 def test_get_unit_matrix():
     """A test for the function get_unit_matrix on the file gauss_method.py, a list with 3 sets of RA and DEC values
@@ -153,30 +231,27 @@ def test_get_unit_matrix():
         [-0.07197133772397166 -0.09152817152276324 -0.11175463041961636]]
             
     """
-    result1 = gm.get_unit_matrix(test1_values_ra_dec)
-    assert type(result1) == np.ndarray 
-    assert (result1 == test1_rho).all
-    print(result1)
+    result1 = gm.get_unit_matrix(test1_values_ra_dec[0],test1_values_ra_dec[1])
+    assert type(result1) == list 
+    assert np.array_equal(np.array(result1).squeeze(),test1_rho)
 
-# Test for function calculate_postion are on file test_wis
+# Test for function calculate_position are on file test_wis
 
 def test_calculate_values_for_cs():
-    """A test for the function calculate_values_for_cs on the file gauss_method.py, This function provided it'sargument; 
+    """A test for the function calculate_values_for_cs on the file gauss_method.py, This function provided the parameters; 
     the a1, b1, a3, b3, position matrix R, unit matrix of the object, and the "B" matrix 
-    provides values neccesary to calculate the four coefficient used on the eight degreee equation used on the gauss method
+    provides values necessary to calculate the four coefficient used on the eight degree equation used on the gauss method
     Provided Values:
         test1_a_1 = 0.5361692088746649
         test1_b_1 = 10.85279479419046
         test1_a_3 = 0.4638307911253351
         test1_b_3 = 10.341735205810208
-        postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
-        postion_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
-        postion_vector3 = [-0.89451148183020490,-0.41779882542249258,-0.18111530838131065]
-        test1_position_R = np.matrix([[postion_vector1[0],postion_vector2[0],postion_vector3[0]],[postion_vector1[1],postion_vector2[1],postion_vector3[1]],[postion_vector1[2],postion_vector2[2],postion_vector3[2]]])
-        unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]
-        unit_vector2 = [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
-        unit_vector3 = [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
-        test1_rho = np.matrix([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],[unit_vector1[1],unit_vector2[1],unit_vector3[1]],[unit_vector1[2],unit_vector2[2],unit_vector3[2]]])
+        test1_position_R = np.array([[-0.96969860078090808, -0.94067474928282591 , -0.89451148183020490 ],
+                            [-0.22449591050121329, -0.31618137964297799 ,  0.41779882542249258 ],
+                            [-9.7312854877537963E-002 ,-0.13705996332878803 ,-0.18111530838131065]])
+        test1_rho = np.array([[-0.52583173389865490, -0.58752551582774715, -0.65408632170819792 ],
+                    [ 0.84753826708376778 , 0.80401266287853912, 0.74811896536180311 ],
+                    [-7.1971337723971657E-002,-9.1528171522763241E-002, -0.11175463041961636]])
         test1_B_matrix = np.matrix([[115.62989788917604,85.74605554189431,50.08435887453609],
         [-225.65321388125662,-170.38814074716754,-104.27900008385723],
         [ 111.21597772750607,85.55454550094318,54.77127152627216]])
@@ -190,14 +265,14 @@ def test_calculate_values_for_cs():
         
         The fortran results are ->
         No Fortran result is provided, because this function performs mathematical operations differently 
-        than the Fortran orbfit code.  
+        than the Fortran Orbfit code.  
             
     """
     result = gm.calculate_values_for_cs(test1_a_1,test1_b_1,test1_a_3,test1_b_3,test1_position_R,test1_rho,test1_B_matrix)
-    assert result[0] == 1.0320244737742499
-    assert result[1] == -3527.3938312967603
-    assert result[2] == 1.0018109014773862
-    assert result[3] == 0.31100143213162895
+    assert result[0] == exp_cal_valcs1_0
+    assert result[1] == exp_cal_valcs1_1
+    assert result[2] == exp_cal_valcs1_2
+    assert result[3] == exp_cal_valcs1_3
 
 def test_calculate_cs():
     """A test for the function calculate_cs on the file gauss_method.py, with d1, d2, magnitude of R2, and the 
@@ -231,9 +306,10 @@ def test_calculate_cs():
 
 def test_calculate_rhos_and_r():
     """A test for the function calculate_rhos_and_r on the file gauss_method.py, with d1, d2, magnitude of R2, and the 
-    dot product it calculates the four coefficient used on the eight degreee equation for the gauss method
+    dot product it calculates the four coefficient used on the eight degree equation for the gauss method
+    
     Provided Values:
-        test1_1_sigma = 0.00025237609721519305 # for root 1.0544796939365233
+        root 1.0544796939365233
         test1_B_matrix = np.matrix([[115.62989788917604,85.74605554189431,50.08435887453609],
         [-225.65321388125662,-170.38814074716754,-104.27900008385723],
         [ 111.21597772750607,85.55454550094318,54.77127152627216]])
@@ -241,15 +317,13 @@ def test_calculate_rhos_and_r():
         test1_b_1 = 10.85279479419046
         test1_a_3 = 0.4638307911253351
         test1_b_3 = 10.341735205810208
-        postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
-        postion_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
-        postion_vector3 = [-0.89451148183020490,-0.41779882542249258,-0.18111530838131065]
-        test1_position_R = np.matrix([[postion_vector1[0],postion_vector2[0],postion_vector3[0]],[postion_vector1[1],postion_vector2[1],postion_vector3[1]],[postion_vector1[2],postion_vector2[2],postion_vector3[2]]])
-        unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]
-        unit_vector2 = [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
-        unit_vector3 = [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
-        test1_rho = np.matrix([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],[unit_vector1[1],unit_vector2[1],unit_vector3[1]],[unit_vector1[2],unit_vector2[2],unit_vector3[2]]])
-        
+        test1_rho = np.array([[-0.52583173389865490, -0.58752551582774715, -0.65408632170819792 ],
+                    [ 0.84753826708376778 , 0.80401266287853912, 0.74811896536180311 ],
+                    [-7.1971337723971657E-002,-9.1528171522763241E-002, -0.11175463041961636]])
+        test1_position_R = np.array([[-0.96969860078090808, -0.94067474928282591 , -0.89451148183020490 ],
+                            [-0.22449591050121329, -0.31618137964297799 ,  0.41779882542249258 ],
+                            [-9.7312854877537963E-002 ,-0.13705996332878803 ,-0.18111530838131065]])
+                            
     Results:
         The code result are ->
         root = 1.0544796939365233
@@ -280,39 +354,38 @@ def test_calculate_rhos_and_r():
         r31:  -0.99517939415294532
         r32:  -0.30265871025338281
         r33:  -0.19831503411072457
-
-    sigma provided value depends on the given root
     """
     result1 = gm.calculate_rhos_and_r(test1_1_root,test1_B_matrix,test1_a_1,test1_b_1,test1_a_3,test1_b_3,test1_position_R,test1_rho)
-    assert len(result1) == 3 and len(result1[1]) == 3 and type(result1[2][0][0]) == np.float64
+    # print(lenresult1)
+    # exit()
+    assert len(result1) == 3 and len(result1[1]) == 3 
     assert result1[0] == test1_1_root # root
-    assert round(result1[1][0],11)  == round(0.13131676742198489,11) # rho 1
-    assert round(result1[1][1],11)  == round(0.14179458528999755,11)# rho 2
-    assert round(result1[1][2],11)  ==  round(0.15390615730938734,11)# rho 3
-    assert round(result1[2][0,0],11)  == round(-1.0387491242843767,11)# matrix component r_1 (1,0)
-    assert round(result1[2][1,0],12)  == round(-0.11319992500134204,12)# matrix component r_1 (2,0)
-    assert round(result1[2][2,0],11)  == round( -0.10676389829448588,11)# matrix component r_1 (3,0)
-    assert round(result1[2][0,1],12)  == round(-1.0239826861469132,12)# matrix component r_2 (1,0)
-    assert round(result1[2][1,1],12)  == round(-0.20217673754220894,12)# matrix component r_2 (2,0)
-    assert round(result1[2][2,1],12)  == round(-0.15003816245221002,12)# matrix component r_2 (3,0)
-    assert round(result1[2][0,2],12)  == round(-0.99517939415294532,12)# matrix component r_3 (1,0)
-    assert round(result1[2][1,2],12)  == round( -0.30265871025338281,12)# matrix component r_3 (2,0)
-    assert round(result1[2][2,2],12) == round(-0.19831503411072457,12)# matrix component r_2 (3,0)    
+    assert round(result1[1][0],11)  == round(exp_calc_rhosr1_10,11) # rho 1
+    assert round(result1[1][1],11)  == round(exp_calc_rhosr1_11,11)# rho 2
+    assert round(result1[1][2],11)  ==  round(exp_calc_rhosr1_12,11)# rho 3
+    result1_part2 = result1[2].squeeze()
+    assert round(result1_part2[0,0],11)  == round(exp_calc_rhosr1_200,11)# matrix component r_1 (1,0)
+    assert round(result1_part2[1,0],12)  == round(exp_calc_rhosr1_210,12)# matrix component r_1 (2,0)
+    assert round(result1_part2[2,0],11)  == round(exp_calc_rhosr1_220,11)# matrix component r_1 (3,0)
+    assert round(result1_part2[0,1],12)  == round(exp_calc_rhosr1_201,12)# matrix component r_2 (1,0)
+    assert round(result1_part2[1,1],12)  == round(exp_calc_rhosr1_211,12)# matrix component r_2 (2,0)
+    assert round(result1_part2[2,1],12)  == round(exp_calc_rhosr1_221,12)# matrix component r_2 (3,0)
+    assert round(result1_part2[0,2],12)  == round(exp_calc_rhosr1_202,12)# matrix component r_3 (1,0)
+    assert round(result1_part2[1,2],12)  == round(exp_calc_rhosr1_212,12)# matrix component r_3 (2,0) # need to fix
+    print(result1_part2[1,2])
+    assert round(result1_part2[2,2],12) == round(exp_calc_rhosr1_222,12)# matrix component r_2 (3,0)    
 
 def test_gauss_method():
-    """A test for the function  on the file gauss_method.py, this function provided three observation times, the rho matrix and psotion
+    """A test for the function  on the file gauss_method.py, this function provided three observation times, the rho matrix and position
     of the observer returns the rho and r values using the gauss method (eight degree equation)
     Provided Values:
         test1_times = [58577.489970740738,58583.545550740739,58590.545550740739]
-        unit_vector1 = [-0.52583173389865490,0.84753826708376778,-7.1971337723971657E-002]
-        unit_vector2 = [-0.58752551582774715,0.80401266287853912,-9.1528171522763241E-002]
-        unit_vector3 = [-0.65408632170819792,0.74811896536180311,-0.11175463041961636]
-        test1_rho = np.matrix([[unit_vector1[0],unit_vector2[0],unit_vector3[0]],[unit_vector1[1],unit_vector2[1],unit_vector3[1]],[unit_vector1[2],unit_vector2[2],unit_vector3[2]]])
-        postion_vector1 = [-0.96969860078090808,-0.22449591050121329,-9.7312854877537963E-002]
-        postion_vector2 = [-0.94067474928282591,-0.31618137964297799,-0.13705996332878803]
-        postion_vector3 = [-0.89451148183020490,-0.41779882542249258,-0.18111530838131065]
-        test1_position_R = np.matrix([[postion_vector1[0],postion_vector2[0],postion_vector3[0]],[postion_vector1[1],postion_vector2[1],postion_vector3[1]],[postion_vector1[2],postion_vector2[2],postion_vector3[2]]])
-
+        test1_rho = np.array([[-0.52583173389865490, -0.58752551582774715, -0.65408632170819792 ],
+                    [ 0.84753826708376778 , 0.80401266287853912, 0.74811896536180311 ],
+                    [-7.1971337723971657E-002,-9.1528171522763241E-002, -0.11175463041961636]])
+        test1_position_R = np.array([[-0.96969860078090808, -0.94067474928282591 , -0.89451148183020490 ],
+                            [-0.22449591050121329, -0.31618137964297799 ,  -0.41779882542249258 ],
+                            [-9.7312854877537963E-002 ,-0.13705996332878803 ,-0.18111530838131065]])
     Results:
         The code result are ->
         root = 0.9836605218147869
@@ -402,48 +475,41 @@ def test_gauss_method():
         
     """
     result = gm.gauss_method(test1_times,test1_rho,test1_position_R)
-    assert len(result) == 3 
-    assert round(result[0][0],11) == round(1.2457493693119874,11)# root
-    assert round(result[0][1][0],11)  == round(0.45894799661611524,11) # rho 1
-    assert round(result[0][1][1],11)  == round(0.49211020370124259,11)# rho 2
-    assert round(result[0][1][2],11)  ==  round(0.53267219814382072,11)# rho 3
-    assert round(result[0][2][0][0,0],11)  == round(-1.2110280216108740,11)# matrix component r_1 (1,0)
-    assert round(result[0][2][0][1,0],12)  == round(0.16448007923237593,12)# matrix component r_1 (2,0)
-    assert round(result[0][2][0][2,0],11)  == round(-0.13034395613973659,11)# matrix component r_1 (3,0)
-    assert round(result[0][2][1][0,0],12)  == round(-1.2298020505564962,12)# matrix component r_2 (1,0)
-    assert round(result[0][2][1][1,0],11)  == round(7.9481455664558387E-002,11)# matrix component r_2 (2,0)
-    assert round(result[0][2][1][2,0],12)  == round(-0.18210191046125732,12)# matrix component r_2 (3,0)
-    assert round(result[0][2][2][0,0],12)  == round(-1.2429250805903169,12)# matrix component r_3 (1,0)
-    assert round(result[0][2][2][1,0],12)  == round(-1.9296651670140053E-002,12)# matrix component r_3 (2,0)
-    assert round(result[0][2][2][2,0],12) == round(-0.24064389301967798,12)# matrix component r_2 (3,0)
-    
-    assert round(result[1][0],11) == round(1.0544796939362728,11)# root
-    assert round(result[1][1][0],11)  == round(0.13131676742198489,11) # rho 1
-    assert round(result[1][1][1],11)  == round(0.14179458528999755,11)# rho 2
-    assert round(result[1][1][2],11)  ==  round(0.15390615730938734,11)# rho 3
-    assert round(result[1][2][0][0,0],11)  == round(-1.0387491242843767,11)# matrix component r_1 (1,0)
-    assert round(result[1][2][0][1,0],12)  == round(-0.11319992500134204,12)# matrix component r_1 (2,0)
-    assert round(result[1][2][0][2,0],11)  == round( -0.10676389829448588,11)# matrix component r_1 (3,0)
-    assert round(result[1][2][1][0,0],12)  == round(-1.0239826861469132,12)# matrix component r_2 (1,0)
-    assert round(result[1][2][1][1,0],12)  == round(-0.20217673754220894,12)# matrix component r_2 (2,0)
-    assert round(result[1][2][1][2,0],12)  == round(-0.15003816245221002,12)# matrix component r_2 (3,0)
-    assert round(result[1][2][2][0,0],12)  == round(-0.99517939415294532,12)# matrix component r_3 (1,0)
-    assert round(result[1][2][2][1,0],12)  == round( -0.30265871025338281,12)# matrix component r_3 (2,0)
-    assert round(result[1][2][2][2,0],12) == round(-0.19831503411072457,12)# matrix component r_2 (3,0)
-    
-    assert round(result[2][0],11) == round(0.98366052181486430,11)# root
-    assert round(result[2][1][0],11)  == round(-6.1154610272977687E-002,11) # rho 1
-    assert round(result[2][1][1],11)  == round(-6.4658519414266299E-002,11)# rho 2
-    assert round(result[2][1][2],11)  ==  round(-6.8533598008092847E-002,11)# rho 3
-    assert round(result[2][2][0][0,0],11)  == round(-0.93754156602517169,11)# matrix component r_1 (1,0)
-    assert round(result[2][2][0][1,0],12)  == round(-0.27632678291615598,12)# matrix component r_1 (2,0)
-    assert round(result[2][2][0][2,0],11)  == round(-9.2911475768203619E-002,11)# matrix component r_1 (3,0)
-    assert round(result[2][2][1][0,0],12)  == round(-0.90268621931130066,12)# matrix component r_2 (1,0)
-    assert round(result[2][2][1][1,0],12)  == round(-0.36816764801502594,12)# matrix component r_2 (2,0)
-    assert round(result[2][2][1][2,0],12)  == round(-0.13114188727343115,12)# matrix component r_2 (3,0)
-    assert round(result[2][2][2][0,0],11)  == round(-0.84968459279566322,11)# matrix component r_3 (1,0)
-    assert round(result[2][2][2][1,0],12)  == round(-0.46907010985682873,12)# matrix component r_3 (2,0)
-    assert round(result[2][2][2][2,0],12) == round(-0.17345636146458968,12)# matrix component r_2 (3,0)
+    # roots,test_root,r_values,v2,orbit_elements
+    assert round(result[0][0],11) == round(exp_gasuss1_00,11)# root
+    # print(result[2][0,2,2])
+    # exit()
+    print(result[0])
 
-# test_gauss_method()
-print("hello")
+    assert round(result[2][0,0,0],11)  == round(exp_gasuss1_2_000,11)# matrix component r_1 (1,0)
+    assert round(result[2][0,1,0],12)  == round(exp_gasuss1_2_010,12)# matrix component r_1 (2,0)
+    assert round(result[2][0,2,0],11)  == round(exp_gasuss1_2_020,11)# matrix component r_1 (3,0)
+    assert round(result[2][0,0,1],12)  == round(exp_gasuss1_2_001,12)# matrix component r_2 (1,0)
+    assert round(result[2][0,1,1],11)  == round(exp_gasuss1_2_011,11)# matrix component r_2 (2,0)
+    assert round(result[2][0,2,1],12)  == round(exp_gasuss1_2_021,12)# matrix component r_2 (3,0)
+    assert round(result[2][0,0,2],12)  == round(exp_gasuss1_2_002,12)# matrix component r_3 (1,0)
+    assert round(result[2][0,1,2],12)  == round(exp_gasuss1_2_012,12)# matrix component r_3 (2,0)
+    assert round(result[2][0,2,2],12) == round(exp_gasuss1_2_022,12)# matrix component r_2 (3,0)
+    
+    assert round(result[0][1],11) == round(exp_gasuss1_01,11)# root
+    assert round(result[2][1,0,0],11)  == round(exp_gasuss1_2_100,11)# matrix component r_1 (1,0)
+    assert round(result[2][1,1,0],12)  == round(exp_gasuss1_2_110,12)# matrix component r_1 (2,0)
+    assert round(result[2][1,2,0],11)  == round(exp_gasuss1_2_120,11)# matrix component r_1 (3,0)
+    assert round(result[2][1,0,1],12)  == round(exp_gasuss1_2_101,12)# matrix component r_2 (1,0)
+    assert round(result[2][1,1,1],12)  == round(exp_gasuss1_2_111,12)# matrix component r_2 (2,0)
+    assert round(result[2][1,2,1],12)  == round(exp_gasuss1_2_121,12)# matrix component r_2 (3,0)
+    assert round(result[2][1,0,2],12)  == round(exp_gasuss1_2_102,12)# matrix component r_3 (1,0)
+    assert round(result[2][1,1,2],12)  == round(exp_gasuss1_2_112,12)# matrix component r_3 (2,0)
+    assert round(result[2][1,2,2],12) == round(exp_gasuss1_2_122,12)# matrix component r_2 (3,0)
+    
+    assert round(result[0][2],11) == round(exp_gasuss1_02,11)# root
+    assert round(result[2][2,0,0],11)  == round(exp_gasuss1_2_200,11)# matrix component r_1 (1,0)
+    assert round(result[2][2,1,0],12)  == round(exp_gasuss1_2_210,12)# matrix component r_1 (2,0)
+    assert round(result[2][2,2,0],11)  == round(exp_gasuss1_2_220,11)# matrix component r_1 (3,0)
+    assert round(result[2][2,0,1],12)  == round(exp_gasuss1_2_201,12)# matrix component r_2 (1,0)
+    assert round(result[2][2,1,1],12)  == round(exp_gasuss1_2_211,12)# matrix component r_2 (2,0)
+    assert round(result[2][2,2,1],12)  == round(exp_gasuss1_2_221,12)# matrix component r_2 (3,0)
+    assert round(result[2][2,0,2],11)  == round(exp_gasuss1_2_202,11)# matrix component r_3 (1,0)
+    assert round(result[2][2,1,2],12)  == round(exp_gasuss1_2_212,12)# matrix component r_3 (2,0)
+    assert round(result[2][2,2,2],12) == round(exp_gasuss1_2_222,12)# matrix component r_2 (3,0)
+test_gauss_method()

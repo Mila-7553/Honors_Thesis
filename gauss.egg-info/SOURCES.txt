@@ -1,6 +1,7 @@
 README.md
 pyproject.toml
 gauss/__init__.py
+gauss/demo.py
 gauss/fortran_code_replica.py
 gauss/gauss_method.py
 gauss/math_fucntions.py
@@ -9,3 +10,6 @@ gauss.egg-info/SOURCES.txt
 gauss.egg-info/dependency_links.txt
 gauss.egg-info/requires.txt
 gauss.egg-info/top_level.txt
+test/test_fortran_code_replica.py
+test/test_gauss_method.py
+test/test_math_functions.py

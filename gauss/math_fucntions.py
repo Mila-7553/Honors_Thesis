@@ -60,20 +60,34 @@ def eight_equation_four_coeff(c,c3,c6,c8):
     Returns:
         np.array: returns the positive and real roots generated from the provided coefficients
     """
+    c = np.atleast_1d(c)
+    c = c.flatten()
+    c3 = np.atleast_1d(c3)
+    c3 = c3.flatten()
+    c6 = np.atleast_1d(c6)
+    c6 = c6.flatten()
+    c8 = np.atleast_1d(c8)
+    c8 = c8.flatten()
+    if len(c) != len(c3) or len(c) != len(c6) or len(c) != len(c8):
+        print("Error, on function eight_equation_four_coeff, file gauss_method.py")
+        print("The provided values do not have the expected dimension")
+        print(len(c),len(c3),len(c6),len(c8))
+        raise ValueError
+    size = len(c)
     if type(c) == list or type(c) == np.ndarray and len(c6) == len(c8):
         size = len(c6)
     else:
         size = 1
-    c = np.array(c,dtype=np.float64)
-    c3 = np.array(c3,dtype=np.float64)
-    c6 = np.array(c6,dtype=np.float64)
-    c8 = np.array(c8,dtype=np.float64)
+    # print(c)
+    c = np.array(c,dtype=np.float64).squeeze()
+    c3 = np.array(c3,dtype=np.float64).squeeze()
+    c6 = np.array(c6,dtype=np.float64).squeeze()
+    c8 = np.array(c8,dtype=np.float64).squeeze()
     c1 = np.full(size, 0).squeeze()
     c2 = np.full(size, 0).squeeze()
     c4 = np.full(size, 0).squeeze()
     c5 = np.full(size, 0).squeeze()
     c7 = np.full(size, 0).squeeze()
-    
     coefficients = np.array([c8,c7,c6,c5,c4,c3,c2,c1,c]) # some numbers are passed in as matrices elements thus making them floats.
     coefficients = coefficients.T
     if size == 1:
@@ -84,8 +98,18 @@ def eight_equation_four_coeff(c,c3,c6,c8):
         print(f'Unable to produce a root: {coefficients}')
         print("function test_four_coeff")
         exit()
-    positive_roots = [-100,-100,-100] # still need to test this values are able to run without errors. 
-    positive_roots = [roots[np.isreal(roots) & (roots.real >= 0)].real
-    for roots in roots_all] # makes sure they stay in their apporpiate sublist
-    positive_roots = np.array(positive_roots,dtype=np.longdouble).squeeze()
+    positive_roots = [] # still need to test this values are able to run without errors. 
+    # positive_roots = [-100,-100,-100] # still need to test this values are able to run without errors. 
+    # positive_roots = [roots[np.isreal(roots) & (roots.real >= 0)].real
+    # for roots in roots_all] # makes sure they stay in their apporpiate sublist
+    # positive_roots = np.array(positive_roots,dtype=np.longdouble).squeeze()
+
+    for i in range(len(roots_all)):
+        curren_pos = roots_all[i][np.isreal(roots_all[i]) & (roots_all[i] > 0)]
+        while len(curren_pos) < 3:
+            curren_pos = np.append(curren_pos,0.0001)
+        curren_pos = curren_pos.astype(np.float64)
+        positive_roots.append([curren_pos])
+    positive_roots = np.array(positive_roots)
+    positive_roots = positive_roots.squeeze()
     return positive_roots
