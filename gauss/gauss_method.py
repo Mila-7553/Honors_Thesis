@@ -8,6 +8,7 @@ import numpy as np
 import sys
 import pyorb
 import warnings
+
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 module_path = "/home/mila/mpc-software/wis/wis" # contains path for wis module only usuable on linux
 if module_path not in sys.path:
