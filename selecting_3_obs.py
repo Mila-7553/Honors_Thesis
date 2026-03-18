@@ -33,10 +33,16 @@ def create_A_3obs_sets(dates: np.array, total_arc_lenght=15,max_mid_last = 5,max
         print("Please provide valid dates for making sets of 3 observations")
         print("Selecting_3_obs.py, create_A_3obs_sets")
         raise ValueError
+    # chekning that there are less then 1000 obs provided
+    if len(date_obs) >= 1000:
+        print(f"Too many observations provided {len(date_obs)}")
+        raise ValueError
     date_obs.sort() 
     sets_3_obs = []
     count = 0 # total number of sets of three found
     for i in range(len(date_obs)):    
+        if float(date_obs[i]) <= 2451545.5000000:
+            continue
         for j in range(i+1, len(date_obs)):
             diff_obs2_obs1 = date_obs[j] - date_obs[i]
             
@@ -105,11 +111,14 @@ def chose_obs_sets(obs_sets: np.array,num_sets=10,indexes=[]):
                 remainder -=1
             end = start + subspace_size + j
             subspaces.append(obs_sets[start:end])
-            print("this is subspace")
-            print(subspaces[-1])
             start = end
         # select a random values from each of the subspaces
-        selected_values = np.array([random.choice(subspace) for subspace in subspaces])
+        selected_values = []
+        for quad in subspaces:
+            value = random.choice(quad)
+            # inn = np.where(obs_sets == value)[0]
+            selected_values.append(value)
+        selected_values = np.array(selected_values)
     else:
         # When indexes are directly provided by the user, those indesex are choosen to retun the sets of dates. 
         try:
@@ -122,6 +131,7 @@ def chose_obs_sets(obs_sets: np.array,num_sets=10,indexes=[]):
 
 # print(create_A_3obs_sets(test_dates))
 # x = create_A_3obs_sets(test_dates,max_comb=10)
+
 # print(x)
 # exit()
 
@@ -146,8 +156,9 @@ def position_obs_wis(mjd,obscode): # uses Wis.py
         (such as provided a list of 4 times, it returns a list with 4, 3x3 matrices corresponding to each time)
     """
     # flattening the parameters 
-    mjd = gm.flat_variable(mjd)
-    jd_times = gm.mjd_to_jd(mjd)
+    jd_times = gm.flat_variable(mjd)
+    obscode = gm.flat_variable(obscode)
+    jd_times = gm.mjd_to_jd(jd_times)
     
     if type(obscode) == str or type(obscode) == int or len(obscode) == 1:
         obscode = np.repeat(obscode,len(mjd))
@@ -162,26 +173,24 @@ def position_obs_wis(mjd,obscode): # uses Wis.py
         dict_code_times[obscode[i]].append([jd_times[i],i])  # putting index on the dictonary for reodering 
    
     positions = np.zeros((len(mjd),3))
-    import wis
+    from wis import wis  as wi
     for code, values in dict_code_times.items():
         values = np.array(values)
         jd_times = values[:,0]
         indexes = np.array(values[:,1],dtype=int)
         times = Time(jd_times, format='jd', scale='tdb')
          # imported withing the function, because  importing takes some runtime
-        W = wis.wis(str(code), times) # as w and pass the w
+        W = wi(str(code), times) # as w and pass the w
         observer_posns = W.hXYZ
         observer_posns = np.array(observer_posns)
-        print(indexes)
         positions[indexes] = observer_posns
     return positions
-exit()
     # return np.matrix(observer_posns)
 obscodes = ["A24","703","505","500","500", "505","500"]
 times = [58577.489970740738,58583.545550740739,58590.545550740739]
 times = [58577.489970740738,58577.489970740738,58577.489970740738,58577.489970740738,58577.489970740738,58577.489970740738,58577.489970740738]
-print(len(times))
-print()
+# print(len(times))
+# print()
 
 # observation has, time, asteroid, ra, dec, obscode 
 
@@ -191,13 +200,15 @@ print()
 # [[-0.9696986008561639  -0.2244959102068138  -0.09731285474991118] onw row corresponds to one time and one obs code
 #  [-0.9406747493915482  -0.31618137935660046 -0.13705996320464234]
 #  [-0.8945114819710074  -0.4177988251583791  -0.18111530826682148]]
-x= position_obs_wis(times,obscodes)
+# x= position_obs_wis(times,obscodes)
+# print(x)
+
 # list1 = np.zeros((10,3))
 # indexes = np.array([1,5,2])
 # values = np.matrix([[43,543,21],[324,439,439],[321,232,565]])
 # list1[indexes]=values
 # print(list1)
-print()
-print(x)
+# print()
+# print(x)
 # 17188        KC2012 12 11.18706 05 23 22.28 +33 56 15.7          18.1 Rc~0nALA24
 # 17188         C2012 12 20.22671 05 00 48.16 +30 43 54.6          17.2 Vr~0mv3703
